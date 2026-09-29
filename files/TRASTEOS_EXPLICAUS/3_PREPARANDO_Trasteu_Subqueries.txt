@@ -1,0 +1,402 @@
+
+-- Queries varias incluido subqueries--
+-- TAREA: https://aulavirtual33.educa.madrid.org/ies.piobaroja.madrid/mod/assign/view.php?id=112267
+
+----------- COPIA Y PEGA INICIAL // CREACION DE TABLAS E INSERTS
+
+CREATE TABLE ciudad (
+    codciudad INTEGER NOT NULL,
+    nombre    VARCHAR2(30) NOT NULL
+);
+
+ALTER TABLE ciudad ADD CONSTRAINT ciudad_pk PRIMARY KEY ( codciudad );
+
+CREATE TABLE cliente (
+    dni              INTEGER NOT NULL,
+    nombre           VARCHAR2(30) NOT NULL,
+    apellido1        VARCHAR2(30) NOT NULL,
+    apellido2        VARCHAR2(30),
+    codciudad INTEGER NOT NULL
+);
+
+ALTER TABLE cliente ADD CONSTRAINT cliente_pk PRIMARY KEY ( dni );
+
+CREATE TABLE color (
+    codcolor INTEGER NOT NULL,
+    nombre   VARCHAR2(20) NOT NULL
+);
+
+ALTER TABLE color ADD CONSTRAINT color_pk PRIMARY KEY ( codcolor );
+
+CREATE TABLE fabricante (
+    codfabr          INTEGER NOT NULL,
+    nombre           VARCHAR2(40) NOT NULL,
+    añofund          INTEGER NOT NULL,
+    codciudad        INTEGER NOT NULL
+);
+
+ALTER TABLE fabricante ADD CONSTRAINT fabricante_pk PRIMARY KEY ( codfabr );
+
+CREATE TABLE pedido (
+    codventa         INTEGER NOT NULL,
+    cantidad         INTEGER NOT NULL,
+    fechaped         DATE NOT NULL,
+    fecharec         DATE,
+    cliente_dni      INTEGER NOT NULL,
+    producto_codprod INTEGER NOT NULL,
+    color_codcolor   INTEGER NOT NULL,
+    tienda_codtienda INTEGER NOT NULL
+);
+
+ALTER TABLE pedido ADD CONSTRAINT pedido_pk PRIMARY KEY ( codventa );
+
+CREATE TABLE producto (
+    codprod            INTEGER NOT NULL,
+    marca              VARCHAR2(20) NOT NULL,
+    modelo             VARCHAR2(20) NOT NULL,
+    prcoste            NUMBER NOT NULL,
+    prventa            NUMBER,
+    fabricante_codfabr INTEGER NOT NULL
+);
+
+ALTER TABLE producto ADD CONSTRAINT producto_pk PRIMARY KEY ( codprod );
+
+CREATE TABLE tienda (
+    codtienda        INTEGER NOT NULL,
+    nombrecomercial  VARCHAR2(30) NOT NULL,
+    codciudad INTEGER NOT NULL
+);
+
+ALTER TABLE tienda ADD CONSTRAINT tienda_pk PRIMARY KEY ( codtienda );
+
+ALTER TABLE cliente
+    ADD CONSTRAINT cliente_ciudad_fk FOREIGN KEY ( codciudad )
+        REFERENCES ciudad ( codciudad );
+
+ALTER TABLE fabricante
+    ADD CONSTRAINT fabricante_ciudad_fk FOREIGN KEY ( codciudad )
+        REFERENCES ciudad ( codciudad );
+
+ALTER TABLE pedido
+    ADD CONSTRAINT pedido_cliente_fk FOREIGN KEY ( cliente_dni )
+        REFERENCES cliente ( dni );
+
+ALTER TABLE pedido
+    ADD CONSTRAINT pedido_color_fk FOREIGN KEY ( color_codcolor )
+        REFERENCES color ( codcolor );
+
+ALTER TABLE pedido
+    ADD CONSTRAINT pedido_producto_fk FOREIGN KEY ( producto_codprod )
+        REFERENCES producto ( codprod );
+
+ALTER TABLE pedido
+    ADD CONSTRAINT pedido_tienda_fk FOREIGN KEY ( tienda_codtienda )
+        REFERENCES tienda ( codtienda );
+
+ALTER TABLE producto
+    ADD CONSTRAINT producto_fabricante_fk FOREIGN KEY ( fabricante_codfabr )
+        REFERENCES fabricante ( codfabr );
+
+ALTER TABLE tienda
+    ADD CONSTRAINT tienda_ciudad_fk FOREIGN KEY ( codciudad )
+        REFERENCES ciudad ( codciudad );
+
+INSERT INTO ciudad (codciudad, nombre) VALUES (1, 'Madrid');
+INSERT INTO ciudad (codciudad, nombre) VALUES (2, 'Barcelona');
+INSERT INTO ciudad (codciudad, nombre) VALUES (3, 'Valencia');
+INSERT INTO ciudad (codciudad, nombre) VALUES (4, 'Sevilla');
+INSERT INTO ciudad (codciudad, nombre) VALUES (5, 'Bilbao');
+INSERT INTO ciudad (codciudad, nombre) VALUES (6, 'Zaragoza');
+INSERT INTO ciudad (codciudad, nombre) VALUES (7, 'Málaga');
+INSERT INTO ciudad (codciudad, nombre) VALUES (8, 'Granada');
+INSERT INTO ciudad (codciudad, nombre) VALUES (9, 'Córdoba');
+INSERT INTO ciudad (codciudad, nombre) VALUES (10, 'Toledo');
+INSERT INTO ciudad (codciudad, nombre) VALUES (11, 'Valladolid');
+INSERT INTO ciudad (codciudad, nombre) VALUES (12, 'Salamanca');
+INSERT INTO ciudad (codciudad, nombre) VALUES (13, 'Santander');
+INSERT INTO ciudad (codciudad, nombre) VALUES (14, 'Oviedo');
+INSERT INTO ciudad (codciudad, nombre) VALUES (15, 'Pamplona');
+INSERT INTO ciudad (codciudad, nombre) VALUES (16, 'Alicante');
+INSERT INTO ciudad (codciudad, nombre) VALUES (17, 'San Sebastián');
+INSERT INTO ciudad (codciudad, nombre) VALUES (18, 'Murcia');
+INSERT INTO ciudad (codciudad, nombre) VALUES (19, 'Las Palmas');
+INSERT INTO ciudad (codciudad, nombre) VALUES (20, 'Tenerife');
+
+INSERT INTO cliente (dni, nombre, apellido1, apellido2,  codciudad) VALUES (1001, 'Juan', 'Pérez', 'Gómez',  1);
+INSERT INTO cliente (dni, nombre, apellido1, apellido2,  codciudad) VALUES (1002, 'Ana', 'López', 'Martín',  2);
+INSERT INTO cliente (dni, nombre, apellido1, apellido2,  codciudad) VALUES (1003, 'Carlos', 'García', 'Sánchez',  16);
+INSERT INTO cliente (dni, nombre, apellido1, apellido2,  codciudad) VALUES (1004, 'María', 'Hernández', 'Fernández',  4);
+INSERT INTO cliente (dni, nombre, apellido1, apellido2,  codciudad) VALUES (1005, 'Luis', 'Ruiz', NULL, 9);
+INSERT INTO cliente (dni, nombre, apellido1, apellido2,  codciudad) VALUES (1006, 'Josefa', 'Medina', NULL, 1);
+
+
+INSERT INTO color (codcolor, nombre) VALUES (1, 'Rojo');
+INSERT INTO color (codcolor, nombre) VALUES (2, 'Azul');
+INSERT INTO color (codcolor, nombre) VALUES (3, 'Verde');
+INSERT INTO color (codcolor, nombre) VALUES (4, 'Negro');
+INSERT INTO color (codcolor, nombre) VALUES (5, 'Blanco');
+
+
+INSERT INTO fabricante (codfabr, nombre, añofund, codciudad) VALUES (1, 'Sony', 1946,  1);
+INSERT INTO fabricante (codfabr, nombre, añofund, codciudad) VALUES (2, 'Samsung', 1938,  2);
+INSERT INTO fabricante (codfabr, nombre, añofund, codciudad) VALUES (3, 'LG', 1958,  3);
+INSERT INTO fabricante (codfabr, nombre, añofund, codciudad) VALUES (4, 'Panasonic', 1918, 4);
+INSERT INTO fabricante (codfabr, nombre, añofund, codciudad) VALUES (5, 'Philips', 1891,  5);
+
+INSERT INTO producto (codprod, marca, modelo, prcoste, prventa, fabricante_codfabr) VALUES (1, 'Sony', 'PS5', 400, 500, 1);
+INSERT INTO producto (codprod, marca, modelo, prcoste, prventa, fabricante_codfabr) VALUES (2, 'Samsung', 'Galaxy S22', 600, 800, 2);
+INSERT INTO producto (codprod, marca, modelo, prcoste, prventa, fabricante_codfabr) VALUES (3, 'LG', 'OLED TV', 1200, 1500, 3);
+INSERT INTO producto (codprod, marca, modelo, prcoste, prventa, fabricante_codfabr) VALUES (4, 'Panasonic', 'Lumix', 500, 700, 4);
+INSERT INTO producto (codprod, marca, modelo, prcoste, prventa, fabricante_codfabr) VALUES (5, 'Philips', 'Hue', 50, 80, 5);
+
+
+INSERT INTO tienda (codtienda, nombrecomercial, codciudad) VALUES (1, 'MediaMarkt Madrid',  1);
+INSERT INTO tienda (codtienda, nombrecomercial, codciudad) VALUES (2, 'Fnac Barcelona',  2);
+INSERT INTO tienda (codtienda, nombrecomercial, codciudad) VALUES (3, 'El Corte Inglés Madrid',  1);
+INSERT INTO tienda (codtienda, nombrecomercial, codciudad) VALUES (4, 'PCComponentes Sevilla',  4);
+INSERT INTO tienda (codtienda, nombrecomercial, codciudad) VALUES (5, 'Carrefour Bilbao',  5);
+
+
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (1, 2, TO_DATE('2025-01-01', 'YYYY-MM-DD'), TO_DATE('2025-01-05', 'YYYY-MM-DD'), 1001, 1, 1, 1);
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (2, 1, TO_DATE('2025-01-02', 'YYYY-MM-DD'), TO_DATE('2025-01-06', 'YYYY-MM-DD'), 1002, 2, 2, 2);
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (3, 3, TO_DATE('2025-01-03', 'YYYY-MM-DD'), NULL, 1003, 3, 3, 3);
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (4, 1, TO_DATE('2025-01-04', 'YYYY-MM-DD'), TO_DATE('2025-01-08', 'YYYY-MM-DD'), 1004, 4, 4, 4);
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (5, 2, TO_DATE('2025-01-05', 'YYYY-MM-DD'), NULL, 1005, 5, 5, 5);
+
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (6, 1, TO_DATE('2025-01-06', 'YYYY-MM-DD'), TO_DATE('2025-01-10', 'YYYY-MM-DD'), 1006, 2, 3, 2);
+ -- Cliente de Madrid compra en Barcelona
+
+
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (7, 2, TO_DATE('2025-01-07', 'YYYY-MM-DD'), TO_DATE('2025-01-12', 'YYYY-MM-DD'), 1002, 3, 4, 3);
+ -- Cliente de Barcelona compra en Valencia
+
+
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (8, 1, TO_DATE('2025-01-08', 'YYYY-MM-DD'), TO_DATE('2025-01-13', 'YYYY-MM-DD'), 1003, 4, 2, 4); 
+-- Cliente de Valencia compra en Sevilla
+
+
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (9, 3, TO_DATE('2025-01-09', 'YYYY-MM-DD'), NULL, 1004, 5, 1, 5);
+ -- Cliente de Sevilla compra en Bilbao
+
+
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (10, 1, TO_DATE('2025-01-10', 'YYYY-MM-DD'), TO_DATE('2025-01-15', 'YYYY-MM-DD'), 1005, 1, 5, 1);
+ -- Cliente de Bilbao compra en Madrid
+
+
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (11, 2, TO_DATE('2025-01-11', 'YYYY-MM-DD'), TO_DATE('2025-01-17', 'YYYY-MM-DD'), 1001, 3, 4, 4);
+ -- Cliente de Madrid compra en Sevilla
+
+
+INSERT INTO pedido (codventa, cantidad, fechaped, fecharec, cliente_dni, producto_codprod, color_codcolor, tienda_codtienda)
+VALUES (12, 2, TO_DATE('2024-01-01', 'YYYY-MM-DD'), TO_DATE('2025-01-02', 'YYYY-MM-DD'), 1006, 2, 4, 2);
+ -- Cliente de Madrid compra en Barcelona
+
+
+
+
+
+
+--TABLAS SELECT
+/*
+SELECT * FROM ciudad;
+SELECT * FROM cliente;
+SELECT * FROM color;
+SELECT * FROM fabricante;
+SELECT * FROM pedido;
+SELECT * FROM producto;
+SELECT * FROM tienda;
+*/
+
+------------------------------------------------------------------------------------------------
+--1. Obtén la media de los precios de venta de los dispositivos de color Verde, Azul o Blanco
+--2. Obtener el código de los productos que han sido pedidos por un cliente de Córdoba  en una tienda de Bilbao
+--3. Obtener el código de los productos pedidos en una tienda de distinta ciudad que el cliente que los compra
+--4. Obtener los fabricantes que hayan fabricado algún producto encargado por un cliente de Madrid en una tienda que no sea de Madrid
+--5. Mostrar el nombre de modelo completo (nombre fabricante, marca y modelo)  de aquellos productos que han sido pedidos por clientes cuyo nombre empieza por 'A' o 'B' o su primer apellido acaba por 'a'.
+--6. Obtener el DNI de los clientes que hayan pedido un producto de color 'Blanco'  en una tienda de Madrid
+--7. Obtener los códigos de los productos pedidos por alguna tienda de Madrid
+--8. Obtener la marca y el modelo de los productos vendidos por alguna tienda que esté en Barcelona, Valencia, Málaga o Sevilla
+--9. Obtener el nombre y los apellidos de los clientes cuya ciudad empiece por 'S' o 'B' que hayan adquirido un producto de color Azul o Negro
+--10. Mostrar el nombre de modelo completo (nombre fabricante, marca y modelo) de los productos que han sido comprado en color verde por clientes de Madrid cuyo nombre empieza por J y su primer apellido tiene una 'e'
+
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+
+
+--1) Obtén la media de los precios de venta de los dispositivos de color Verde, Azul o Blanco:
+
+SELECT AVG(p.prventa) AS media_precio_venta
+FROM producto p, pedido pe, color c
+where p.codprod = pe.producto_codprod
+and  pe.color_codcolor = c.codcolor
+and  c.nombre IN ('Verde', 'Azul', 'Blanco');
+
+-- MEDIA_PRECIO_VENTA
+-- 730
+
+
+2) -- Obtener el código de los productos que han sido pedidos por 
+-- un cliente de Córdoba en una tienda de Bilbao:
+
+SELECT DISTINCT pe.producto_codprod
+FROM pedido pe, cliente c, ciudad ci, tienda t
+WHERE  pe.cliente_dni = c.dni
+AND c.codciudad = ci.codciudad
+AND pe.tienda_codtienda = t.codtienda 
+AND ci.nombre = 'Córdoba' 
+AND t.codciudad = (Select codciudad 
+			from CIUDAD 
+			where nombre='Bilbao')
+ORDER BY 1;
+
+-- PRODUCTO_CODPROD
+-- 5
+
+-- 3) Obtener el código de los productos pedidos en una 
+--tienda de distinta ciudad que el cliente que los compra:
+
+SELECT DISTINCT pe.producto_codprod
+FROM pedido pe, cliente c,  tienda t
+WHERE pe.cliente_dni = c.dni AND
+  pe.tienda_codtienda = t.codtienda AND
+  c.codciudad != t.codciudad
+ORDER BY 1;
+
+
+SELECT DISTINCT pe.producto_codprod
+FROM pedido pe
+JOIN cliente c ON pe.cliente_dni = c.dni
+JOIN tienda t ON pe.tienda_codtienda = t.codtienda
+WHERE c.codciudad != t.codciudad
+ORDER BY 1;
+
+-- PRODUCTO_CODPROD
+-- 1
+-- 2
+-- 3
+-- 4
+-- 5
+
+-- 4) Obtener los fabricantes que hayan fabricado algún producto 
+--encargado por un cliente de Madrid en una tienda que no sea de Madrid:
+
+SELECT DISTINCT f.nombre
+FROM fabricante f
+JOIN producto p ON f.codfabr = p.fabricante_codfabr
+JOIN pedido pe ON p.codprod = pe.producto_codprod
+JOIN cliente c ON pe.cliente_dni = c.dni
+JOIN tienda t ON pe.tienda_codtienda = t.codtienda
+WHERE c.codciudad = (Select codciudad from CIUDAD where nombre='Madrid')
+AND t.codciudad != (Select codciudad from CIUDAD where nombre='Madrid')
+ORDER BY F.NOMBRE;
+
+
+-- NOMBRE
+-- LG
+-- Samsung
+
+-- 5) Mostrar el nombre de modelo completo (nombre fabricante, marca y modelo) de aquellos productos que han sido 
+---pedidos por clientes cuyo nombre empieza por 'A' o 'B' o su primer apellido acaba por 'a':
+
+SELECT f.nombre || ' ' || p.marca || ' ' || p.modelo AS modelo_completo
+FROM producto p
+JOIN fabricante f ON p.fabricante_codfabr = f.codfabr
+JOIN pedido pe ON p.codprod = pe.producto_codprod
+JOIN cliente c ON pe.cliente_dni = c.dni
+WHERE c.nombre LIKE 'A%' OR c.nombre LIKE 'B%' OR c.apellido1 LIKE '%a';
+
+-- MODELO_COMPLETO
+-- Samsung Samsung Galaxy S22
+-- LG LG OLED TV
+-- Samsung Samsung Galaxy S22
+-- LG LG OLED TV
+-- Panasonic Panasonic Lumix
+-- Samsung Samsung Galaxy S22
+
+-- 6) Obtener el DNI de los clientes que hayan pedido un producto de color 'Blanco' en una tienda de Madrid:
+
+SELECT DISTINCT pe.cliente_dni
+FROM pedido pe
+JOIN color c ON pe.color_codcolor = c.codcolor
+JOIN tienda t ON pe.tienda_codtienda = t.codtienda
+WHERE c.nombre = 'Blanco' AND t.codciudad = (Select codciudad from CIUDAD where nombre='Madrid')
+ORDER BY 1;
+
+-- CLIENTE_DNI
+-- 1005
+
+
+-- 7) Obtener los códigos de los productos pedidos por alguna tienda de Madrid:
+
+SELECT DISTINCT pe.producto_codprod
+FROM pedido pe
+JOIN tienda t ON pe.tienda_codtienda = t.codtienda
+WHERE t.codciudad =(Select codciudad from CIUDAD where nombre='Madrid')
+ORDER BY 1;
+
+-- Result Set 53
+-- CODPROD
+-- 1
+-- 3
+
+-- 8) Obtener la marca y el modelo de los productos 
+--vendidos por alguna tienda que esté en Barcelona, Valencia, Málaga o Sevilla:
+
+SELECT DISTINCT p.marca, p.modelo
+FROM producto p
+JOIN pedido pe ON p.codprod = pe.producto_codprod
+JOIN tienda t ON pe.tienda_codtienda = t.codtienda
+WHERE t.codciudad IN (Select codciudad
+			from CIUDAD 
+			where nombre IN ( 'Barcelona', 'Valencia', 'Málaga', 'Sevilla'))
+ORDER BY 1,2;
+
+-- MARCA    MODELO
+-- LG    OLED TV
+-- Panasonic    Lumix
+-- Samsung    Galaxy S22
+-- Sony    PS5
+
+-- 9) Obtener el nombre y los apellidos de los clientes 
+--cuya ciudad empiece por 'S' o 'B' que hayan adquirido un producto de color Azul o Negro:
+
+SELECT DISTINCT c.nombre, c.apellido1, c.apellido2
+FROM cliente c
+JOIN pedido pe ON c.dni = pe.cliente_dni
+JOIN color co ON pe.color_codcolor = co.codcolor
+WHERE (c.codciudad IN (Select codciudad from CIUDAD where nombre LIKE 'S%' OR NOMBRE LIKE 'B%') AND co.nombre IN ('Azul', 'Negro'));
+
+ 
+-- NOMBRE    APELLIDO1    APELLIDO2
+-- María    Hernández    Fernández
+-- Ana    López    Martín
+
+1-- 0) Mostrar el nombre de modelo completo (nombre fabricante, marca y modelo) de los 
+--productos que han sido comprados en color verde por clientes de Madrid cuyo 
+--nombre empieza por J y su primer apellido tiene una 'e':
+
+SELECT f.nombre || ' ' || p.marca || ' ' || p.modelo AS modelo_completo
+FROM producto p
+JOIN fabricante f ON p.fabricante_codfabr = f.codfabr
+JOIN pedido pe ON p.codprod = pe.producto_codprod
+JOIN cliente c ON pe.cliente_dni = c.dni
+JOIN color co ON pe.color_codcolor = co.codcolor
+WHERE co.nombre = 'Verde'
+AND c.codciudad = (Select codciudad from CIUDAD where nombre='Madrid')
+AND c.nombre LIKE 'J%'
+AND c.apellido1 LIKE '%e%';
+ 
+-- MODELO_COMPLETO
+-- Samsung Samsung Galaxy S22

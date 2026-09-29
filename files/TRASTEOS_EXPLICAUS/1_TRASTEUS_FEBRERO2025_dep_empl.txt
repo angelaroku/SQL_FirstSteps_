@@ -1,0 +1,253 @@
+--TRASTEUS 6/02/2025 TABLAS [2] // DEPARTAMENTO Y EMPLEADO
+--DATOS TABLA: https://aulavirtual33.educa.madrid.org/ies.piobaroja.madrid/pluginfile.php/150269/mod_resource/content/1/subconsultas.sql
+--EJEMPLOS A PROBAR: https://aulavirtual33.educa.madrid.org/ies.piobaroja.madrid/pluginfile.php/150105/mod_label/intro/imagen%20%282%29.png
+
+/*Trata de entender estos comandos con las tablas departamento y empleado.
+Sobretodo, fijate en el movimiento de los datos y que es lo que resulta al ejecutar el comando*/
+---------------------------------------------------------------------------------------------------------
+/* DATOS A INSERTAR DEL ENLACE
+
+
+CREATE TABLE departamentos (
+    id_departamento NUMBER PRIMARY KEY,
+    nombre_departamento VARCHAR2(50) NOT NULL
+);
+
+CREATE TABLE empleados (
+    id_empleado NUMBER PRIMARY KEY,
+    nombre VARCHAR2(50) NOT NULL,
+    salario NUMBER(10, 2) NOT NULL,
+    id_departamento NUMBER,
+    CONSTRAINT fk_departamento FOREIGN KEY (id_departamento) REFERENCES departamentos(id_departamento)
+);
+
+
+INSERT INTO departamentos (id_departamento, nombre_departamento) VALUES (1, 'Ventas');
+INSERT INTO departamentos (id_departamento, nombre_departamento) VALUES (2, 'Marketing');
+INSERT INTO departamentos (id_departamento, nombre_departamento) VALUES (3, 'IT');
+
+INSERT INTO empleados (id_empleado, nombre, salario, id_departamento) VALUES (1, 'Juan', 3000, 1);
+INSERT INTO empleados (id_empleado, nombre, salario, id_departamento) VALUES (2, 'Ana', 2500, 2);
+INSERT INTO empleados (id_empleado, nombre, salario, id_departamento) VALUES (3, 'Luis', 2700, 3);
+INSERT INTO empleados (id_empleado, nombre, salario, id_departamento) VALUES (4, 'Carmen', 3200, 2);
+INSERT INTO empleados (id_empleado, nombre, salario, id_departamento) VALUES (5, 'Pedro', 2800, 1);
+INSERT INTO empleados (id_empleado, nombre, salario, id_departamento) VALUES (6, 'Marta', 3300, 3);
+
+
+
+
+*/
+
+
+--Trabajaremos con 2 tablas: empleados y departamentos 
+
+--__--__--__--__--__--__--__--__---__--__--__--__-SELECT-__--__--__--__--__--
+
+--weeeee TABLA DEPARTAMENTOS -> 3 ELEMENTOS // columnas -> ||| ID_DEPARTAMENTO | NOMBRE_DEPARTAMENTO |||
+SELECT * 
+FROM  DEPARTAMENTOS;
+
+--weeeee TABLA EMPLEADOS -> 6 ELEMENTOS // columnas -> ||| ID_EMPLEADO | NOMBRE	| SALARIO | ID_DEPARTAMENTO |||
+SELECT *
+FROM EMPLEADOS;
+
+--weeeeeenooo TABLA DEPARTAMENTOS y EMPLEADOS -> 18 ELEMENTOS 
+-- // columnas -> ||| ID_DEPARTAMENTO | NOMBRE_DEPARTAMENTO | ID_EMPLEADO | NOMBRE | SALARIO | ID_DEPARTAMENTO |||
+
+SELECT * 
+FROM DEPARTAMENTOS , EMPLEADOS;
+
+/*Si nos fijamos en las columnas, vemos que nos salen 
+todas las de la tabla departamento y todas las de la tabla empleados.--> LOS DATOS SE ESTAN MULTIPLICANDO
+Vemos todas las posibles relaciones que podrian ser con los datos existentes. ESTO YA SE CONSIDERA = PRODUCTO
+(estos resultados destan DESFORMALIZADOS, id departamento que es la clave foranea, que relaciona las 2 tablas
+no se ha especificado que son lo mismo.)*/
+
+--__--__--__--__--__--__--__--__--__--
+
+
+--__--__--__--__--__--__--__--__--__--__-SELECCION/PROYECCION-__--__--__--__--__--
+
+--Partamos de esta select
+
+SELECT NOMBRE_DEPARTAMENTO
+ FROM empleados, departamentos ;
+
+/*venimos de la select anterior de producto, vemos 18 elementos,
+todas las posibles relaciones existentes o no, con los datos iniciales
+Vemos lo mismo que en la tabla anterior, 
+pero solo la columna especifica -> NOMBRE_DEPARTAMENTO */
+
+--"""WHERE(de la tabla empleados, ID_DEPARTAMENTO) SEA = (de la tabla departamentos, ID_DEPARTAMENTO)"""
+/*aqui, añadiendo el where, descartamos otras opciones
+y cuando comparamos ELEMENTOS IGUALES de DIFERENTES TABLAS estamos 
+relacionando tablas -> ELEMENTO1 = ELEMENTO2 --> CLAVE FORANEA*/
+
+SELECT NOMBRE_DEPARTAMENTO
+FROM empleados, departamentos 
+WHERE empleados.ID_DEPARTAMENTO = departamentos.ID_DEPARTAMENTO;
+/*con eso seleccionamos la misma columna, pero asegurandonos la relacion entre tablas, 
+porque hemos indicado la clave foranea que relacionaba nuestras 2 tablas*/
+
+--esto es lo mismo, pero escribes menos jeje ;p :
+
+SELECT NOMBRE_DEPARTAMENTO
+FROM empleados e, departamentos d
+WHERE e.ID_DEPARTAMENTO = d.ID_DEPARTAMENTO;
+
+/*en resumen estamos DESCARTANDO INFO,
+
+- La condicion que ponemos en el where es lo que relaciona las dos tablas
+y dentro del where vemos la clave foranea.
+
+- Como maximo tendremos los elementos de la tabla principal.
+
+- En este caso la tabla departamentos complementa la info de la de empleados,
+empleados es nuestra tabla principal, y recordemos que tenia 6 elementos.*/
+
+--__--__--__--__--__--__--__--__--__--
+
+
+
+--__--__--__--__--__--__--__--__--__--__--__--__-JOIN(WHERE)-__--__--__--__--__--
+
+--iwal que el anterior pero ponemos * en lugar de "NOMBRE_DEPARTAMENTO"
+/*Ahora no veremos solo una columna, veremos una tabla entera
+Esta es la tabla de TODAS las posibles relaciones "REALES" de los datos que teniamos
+("REALES" porque señalamos la relacion entre tablas -> la clave foranea)*/
+
+SELECT *
+FROM empleados, departamentos
+WHERE empleados.ID_DEPARTAMENTO = departamentos.ID_DEPARTAMENTO;
+
+--recuerda que tmbn se puede hacer asi y mas easyyy de escribiir weeeee
+
+SELECT *
+FROM empleados e, departamentos d
+WHERE e.ID_DEPARTAMENTO = d.ID_DEPARTAMENTO;
+
+-->>>>>>>>>>>>>>>>>>>>> /////// Recordemos este ultimo select asi:[*1] /// para compararlo con un ejemlo mas adelante
+--__--__--__--__--__--__--__--__--__--
+
+
+
+--__--__--__--__--__--__--__--__--__--__-JOIN(WHERE-AND) SELECCION -__--__--__--__--__--
+
+--DESCARTO OPCIONES (ahora sumamos un "AND")
+/*quiero especificamente->los que tengan un valor de ID_DEPARTAMENTO menor que 2*/
+
+SELECT *
+FROM empleados e, departamentos d 
+WHERE e.ID_DEPARTAMENTO = d.ID_DEPARTAMENTO
+AND e.ID_DEPARTAMENTO < '2';
+
+--__--__--__--__--__--__--__--__--__--
+
+
+--__--__--__--__--__--__--__--__--__--__-JOIN(WHERE-AND) SELECCION/PROYECCION-__--__--__--__--__--
+
+/*Ya que en nuestra foranea, id_departamento
+el valor mas alto es 3, pondre como condicion final 
+que este valor sea menor que 4*/
+--veremos TODOS los nombres de departamento registrados.
+
+SELECT NOMBRE_DEPARTAMENTO
+FROM empleados e, departamentos d
+WHERE e.ID_DEPARTAMENTO = d.ID_DEPARTAMENTO
+AND e.ID_DEPARTAMENTO < '4';
+
+--ya lo tienes xek
+
+---------------------------------------- OHITOO curiosidadezzz ------
+--CON LA QUERY ANTERIOR
+--- eeeeyuuu mira si añades un COUNT(*) al select
+/*esto hace que cuente los registros,
+vemos que son 6 los departamentos registrados*/
+
+SELECT COUNT(*) NOMBRE_DEPARTAMENTO
+FROM empleados e, departamentos 
+WHERE e.ID_DEPARTAMENTO = departamentos.ID_DEPARTAMENTO
+AND e.ID_DEPARTAMENTO < '4';
+
+--- eeeeyuuu mira si añades un DISTINCT al select
+/*esto hace que descarte los registros repetidos,
+vemos que en lugar de los 6 elementos previos,
+solo me salen 3 (antes veiamos 6 porque se repetian)*/
+
+SELECT DISTINCT NOMBRE_DEPARTAMENTO
+FROM empleados e, departamentos 
+WHERE e.ID_DEPARTAMENTO = departamentos.ID_DEPARTAMENTO
+AND e.ID_DEPARTAMENTO < '4';
+
+--__--__--__--__--__--__--__--__--__--
+
+
+
+--__--__--__--__--__--__--__--__--__--__--__--__-JOIN(JOIN)-__--__--__--__--__--
+
+-->>>>>>>>>>>>>>>>>>>>> /////// Recordemos este select:[*1] /// 
+/*Aqui veiamos una tabla de TODAS
+las posibles relaciones "REALES" de los datos que teniamos, 
+señalando la relacion entre tablas -> la clave foranea*/
+
+SELECT *
+FROM empleados e, departamentos d
+WHERE e.ID_DEPARTAMENTO = d.ID_DEPARTAMENTO;
+-- veremos que nos da el mismo resultado que el select a explicar en este apartado
+-->>>>>>>>>>>>>>>>>>>>> /////// 
+--------------------------- select con JOIN --------
+/*El JOIN nos sirve para referirnos en una sola linea 
+a una relacion entre tablas, (claves foraneas) // Debemos tener en cuenta:
+- En el apartado anterior, en el FROM pondremos todas las tablas a relacionar(en este caso trabajamos con 2 tablas)
+Con el JOIN solo pondremos una tabla(la tabla que se relacionara con las escritas en los JOIN)
+- Dentro del JOIN escribiremos la tabla a relacionar con la tabla inicial, 
+(tabla inicial -> en el FROM--> en este ejemplo "EMPLEADOS")
+- Dentro del JOIN, para referirnos a la relacion entre tablas ([elemento1 = elemento2] --> CLAVE FORANEA)
+lo haremos con un ON ---> JOIN "tabla a relacionar" ON (CLAVE FORANEA)*/
+
+SELECT *
+FROM empleados 
+JOIN departamentos ON empleados.ID_DEPARTAMENTO = departamentos.ID_DEPARTAMENTO;
+
+/*Para verlo claro lo escribo asi, pero recoremos que asi escribimos menos ;d :*/
+
+SELECT *
+FROM empleados e
+JOIN departamentos d ON e.ID_DEPARTAMENTO = d.ID_DEPARTAMENTO;
+
+--__--__--__--__--__--__--__--__--__--
+
+
+
+--__--__--__--__--__--__--__--__--__--__-JOIN(JOIN-WHERE) JOIN/SELECCION-__--__--__--__--__--
+
+--Añadiremos un where a la query anterior
+/*redordemos que añadiendo el where, descartamos otras opciones
+- Sin el where, lo que se pide ver es una tabla con todos los datos
+de las 2 tablas (empleado y departamento), pero teniendo en cuenta 
+la relacion entre las tablas --> e.ID_DEPARTAMENTO = d.ID_DEPARTAMENTO -> Clave Foranea
+- Ahora queremos ver especificamente los datos en los que coincida
+que elID_DEPARTAMENTO, que corresponde a la table de empleados sea Mayor que 2 
+(da igual si te refieres al ID ID_DEPARTAMENTO de empleados o departamento; sus valores son iguales)*/
+
+SELECT *
+FROM empleados e
+JOIN departamentos d ON e.ID_DEPARTAMENTO = d.ID_DEPARTAMENTO
+WHERE e.ID_DEPARTAMENTO > '2' ;
+
+--__--__--__--__--__--__--__--__--__--
+
+
+
+--__--__--__--__--__--__--__--__--__-JOIN(JOIN-WHERE) JOIN/SELECCION/PROYECCION-__--__--__--__--__--
+
+-- cambiemos el * por "NOMBRE_DEPARTAMENTO"
+/*Vemos lo mismo que en la tabla anterior, 
+pero solo la columna especifica -> NOMBRE_DEPARTAMENTO */
+
+SELECT NOMBRE_DEPARTAMENTO
+FROM empleados e
+JOIN departamentos d ON e.ID_DEPARTAMENTO = d.ID_DEPARTAMENTO
+WHERE e.ID_DEPARTAMENTO > '2' ;
+
+--__--__--__--__--__--__--__--__--__--
